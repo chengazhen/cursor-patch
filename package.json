@@ -1,0 +1,54 @@
+{
+  "name": "fake-cursor",
+  "displayName": "fake-cursor",
+  "publisher": "fake-cursor",
+  "description": "A extension for regenerating Cursor device IDs",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "fake-cursor.regenerateId",
+        "title": "Fake Cursor: Regenerate Device ID"
+      },
+      {
+        "command": "fake-cursor.setToken",
+        "title": "Fake Cursor: Regenerate & Set Token"
+      }
+    ],
+    "configuration": {
+      "title": "Fake Cursor",
+      "properties": {
+        "fake-cursor.storagePath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "自定义配置文件所在文件夹的路径。留空则使用默认路径：\n\n- Windows: `%APPDATA%/Cursor/User/globalStorage`\n- macOS: `~/Library/Application Support/Cursor/User/globalStorage`\n- Linux: `~/.config/Cursor/User/globalStorage`"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.93.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.16.0"
+  },
+  "dependencies": {
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
