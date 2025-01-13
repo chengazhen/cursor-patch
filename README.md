@@ -16,7 +16,7 @@
 1. 按下 `Ctrl+Shift+P` (Windows/Linux) 或 `Cmd+Shift+P` (Mac) 打开命令面板
 2. 选择以下命令之一：
    - `Fake Cursor: Regenerate Device ID`: 重新生成设备 ID 并清空认证信息
-   - `Fake Cursor: Regenerate & Set Token`: 重新生成设备 ID 并设置 Access Token（可从 cursor.sh 网站 Cookies 中的 WorkosCursorSessionToken 获取）
+   - `Fake Cursor: Regenerate & Set Token`: 重新生成设备 ID 并设置 Access Token（可从 cursor.sh 网站 Cookies 中的 WorkosCursorSessionToken 获取，如 `user_01OJGGAOEIIYNGY4ISYAJT1U8R%3A%3AeyJhbGciOiJIU...` 中 `%3A%3A` 后面的 `eyJhbGciOiJIU...` ）
    - `Fake Cursor: Read Token`: 读取当前的 Access Token
 3. 根据提示完成操作
 4. 操作完成后 Cursor 将自动退出，重启后生效
