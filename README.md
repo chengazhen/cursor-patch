@@ -1,6 +1,6 @@
 # Fake Cursor
 
-一个用于重新生成 Cursor 设备 ID 和设置 Access Token 的 VSCode 扩展。
+一个用于重新生成 Cursor 设备 ID 和设置 Access Token 的 Cursor 扩展。
 
 ## 功能.
 
@@ -23,7 +23,7 @@
 
 ## 配置选项
 
-在 VSCode 设置中可以配置以下选项：
+在 Cursor 设置中可以配置以下选项：
 
 - `fake-cursor.storagePath`: 自定义配置文件所在文件夹的路径。留空则使用默认路径：
   - Windows: `%APPDATA%/Cursor/User/globalStorage`
