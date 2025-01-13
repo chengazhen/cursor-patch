@@ -18,7 +18,8 @@ function activate(context) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('fake-cursor.regenerateId', handleRegenerateId),
-		vscode.commands.registerCommand('fake-cursor.setToken', handleSetToken)
+		vscode.commands.registerCommand('fake-cursor.setToken', handleSetToken),
+		vscode.commands.registerCommand('fake-cursor.readToken', handleReadToken)
 	);
 }
 
@@ -176,15 +177,6 @@ async function validatePaths(storagePath, dbPath) {
  * @param {string} [accessToken] - 可选的访问令牌
  */
 async function updateDeviceIds(storagePath, dbPath, accessToken) {
-	try {
-		// 删除 machineid 文件
-		const machineIdPath = path.join(path.dirname(path.dirname(path.dirname(storagePath))), 'machineid');
-		await fs.unlink(machineIdPath).catch(() => {});
-	} catch {
-		// 忽略任何路径计算或删除过程中的错误
-		console.log('删除 machineid 文件失败，继续执行...');
-	}
-
 	// 创建备份
 	await Promise.all([
 		fs.copyFile(storagePath, `${storagePath}.backup`).catch(() => {}),
@@ -198,6 +190,15 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 		sqmId: `{${uuidv4().toUpperCase()}}`,
 		macMachineId: crypto.randomBytes(32).toString('hex')
 	};
+
+	try {
+		// 写入 devDeviceId 到 machineid 文件
+		const machineIdPath = path.join(path.dirname(path.dirname(path.dirname(storagePath))), 'machineid');
+		await fs.writeFile(machineIdPath, newIds.devDeviceId, 'utf8');
+	} catch {
+		// 忽略任何路径计算或写入过程中的错误
+		console.log('写入 machineid 文件失败，继续执行...');
+	}
 
 	// 更新JSON配置
 	const jsonConfig = JSON.parse(await fs.readFile(storagePath, 'utf8'));
@@ -269,6 +270,29 @@ async function pathExists(path) {
 		return true;
 	} catch {
 		return false;
+	}
+}
+
+/**
+ * 处理获取Token的命令
+ */
+async function handleReadToken() {
+	try {
+		const paths = await getStoragePath();
+		const db = await open({ filename: paths.dbPath, driver: sqlite3.Database });
+
+		// 从数据库中读取 accessToken
+		const result = await db.get('SELECT value FROM ItemTable WHERE key = ?', 'cursorAuth/accessToken');
+		await db.close();
+
+		if (result) {
+			vscode.window.showInformationMessage(`Access Token: ${result.value}`);
+		} else {
+			vscode.window.showInformationMessage('未找到 Access Token');
+		}
+	} catch (error) {
+		vscode.window.showErrorMessage(`操作失败: ${error.message}`);
+		console.error('详细错误:', error);
 	}
 }
 

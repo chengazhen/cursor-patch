@@ -2,13 +2,14 @@
 
 一个用于重新生成 Cursor 设备 ID 和设置 Access Token 的 VSCode 扩展。
 
-## 功能
+## 功能.
 
 - 重新生成设备 ID（包括 devDeviceId, machineId, sqmId, macMachineId）
 - 设置 Access Token 并激活 Pro 会员
 - 自动备份原有配置文件
 - 支持自定义配置文件路径
 - 自动清理设备标识文件
+- **读取 Access Token**: 通过命令面板读取当前的 Access Token
 
 ## 使用方法
 
@@ -16,6 +17,7 @@
 2. 选择以下命令之一：
    - `Fake Cursor: Regenerate Device ID`: 重新生成设备 ID 并清空认证信息
    - `Fake Cursor: Regenerate & Set Token`: 重新生成设备 ID 并设置 Access Token（可从 cursor.sh 网站 Cookies 中的 WorkosCursorSessionToken 获取）
+   - `Fake Cursor: Read Token`: 读取当前的 Access Token
 3. 根据提示完成操作
 4. 操作完成后 Cursor 将自动退出，重启后生效
 

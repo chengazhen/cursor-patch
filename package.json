@@ -3,7 +3,7 @@
   "displayName": "fake-cursor",
   "publisher": "fake-cursor",
   "description": "A extension for regenerating Cursor device IDs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.93.0"
   },
@@ -21,6 +21,10 @@
       {
         "command": "fake-cursor.setToken",
         "title": "Fake Cursor: Regenerate & Set Token"
+      },
+      {
+        "command": "fake-cursor.readToken",
+        "title": "Fake Cursor: Read Token"
       }
     ],
     "configuration": {
