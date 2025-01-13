@@ -6,8 +6,7 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
-const sqlite3 = require('sqlite3');
-const { open } = require('sqlite');
+const initSqlJs = require('sql.js');
 
 /**
  * 激活扩展时调用的方法
@@ -217,10 +216,12 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 
 	// 更新数据库
 	try {
-		const db = await open({ filename: dbPath, driver: sqlite3.Database });
+		const SQL = await initSqlJs();
+		const dbBuffer = await fs.readFile(dbPath);
+		const db = new SQL.Database(dbBuffer);
 		
 		// 更新设备ID
-		await db.run('UPDATE ItemTable SET value = ? WHERE key = ?', 
+		db.run('UPDATE ItemTable SET value = ? WHERE key = ?', 
 			[newIds.devDeviceId, 'storage.serviceMachineId']);
 
 		// 处理认证信息和会员类型
@@ -228,21 +229,23 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 			['cursorAuth/accessToken', accessToken || ''],
 			['cursorAuth/refreshToken', accessToken || ''],
 			['cursorAuth/cachedEmail', accessToken ? 'admin@cursor.sh' : ''],
+			['cursorAuth/cachedSignUpType', accessToken ? 'Auth_0' : ''],
 			['cursorAuth/stripeMembershipType', accessToken ? 'pro' : 'free_trial']
 		];
 
-		await Promise.all(
-			updates.map(([key, value]) => 
-				db.run('UPDATE ItemTable SET value = ? WHERE key = ?', [value, key])
-			)
-		);
+		updates.forEach(([key, value]) => {
+			db.run('UPDATE ItemTable SET value = ? WHERE key = ?', [value, key]);
+		});
+
+		// 保存数据库文件
+		const data = db.export();
+		await fs.writeFile(dbPath, Buffer.from(data));
+		
+		db.close();
 
 		dbUpdateResult = accessToken 
 			? '✅ 数据库更新成功\n✅ Token已更新\n✅ 会员类型已设置为 pro'
 			: '✅ 数据库更新成功\n✅ 认证信息已清空\n✅ 会员类型已设置为 free_trial';
-
-		await db.close();
-		console.log(dbUpdateResult);
 	} catch (error) {
 		dbUpdateResult = '❌ 数据库更新失败，请手动更新 state.vscdb';
 		console.error('更新数据库失败:', error);
@@ -279,14 +282,15 @@ async function pathExists(path) {
 async function handleReadToken() {
 	try {
 		const paths = await getStoragePath();
-		const db = await open({ filename: paths.dbPath, driver: sqlite3.Database });
+		const SQL = await initSqlJs();
+		const dbBuffer = await fs.readFile(paths.dbPath);
+		const db = new SQL.Database(dbBuffer);
 
-		// 从数据库中读取 accessToken
-		const result = await db.get('SELECT value FROM ItemTable WHERE key = ?', 'cursorAuth/accessToken');
-		await db.close();
+		const result = db.exec('SELECT value FROM ItemTable WHERE key = "cursorAuth/accessToken"');
+		db.close();
 
-		if (result) {
-			vscode.window.showInformationMessage(`Access Token: ${result.value}`);
+		if (result.length > 0 && result[0].values.length > 0) {
+			vscode.window.showInformationMessage(`Access Token: ${result[0].values[0][0]}`);
 		} else {
 			vscode.window.showInformationMessage('未找到 Access Token');
 		}

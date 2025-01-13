@@ -2,7 +2,7 @@
 
 一个用于重新生成 Cursor 设备 ID 和设置 Access Token 的 Cursor 扩展。
 
-## 功能.
+## 功能
 
 - 重新生成设备 ID（包括 devDeviceId, machineId, sqmId, macMachineId）
 - 设置 Access Token 并激活 Pro 会员
@@ -41,3 +41,17 @@
 ## 免责声明
 
 本扩展仅供学习和测试使用。使用本扩展可能违反 Cursor 的服务条款，请自行承担使用风险。
+
+## 开源协议
+
+本项目采用 [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/) 开源协议。
+
+这意味着您可以：
+- ✅ 复制、分发本项目
+- ✅ 修改、演绎本项目
+- ✅ 私人使用
+
+但必须遵循以下规则：
+- 📝 署名 - 标明原作者及修改情况
+- 🚫 非商业性使用 - 不得用于商业目的
+- 🔄 相同方式共享 - 修改后的作品需使用相同的协议

@@ -3,7 +3,7 @@
   "displayName": "fake-cursor",
   "publisher": "fake-cursor",
   "description": "A extension for regenerating Cursor device IDs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -52,12 +52,12 @@
     "eslint": "^9.16.0"
   },
   "dependencies": {
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
+    "sql.js": "^1.8.0",
     "uuid": "^11.0.5"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/none/repo.git"
-  }
+    "url": "https://github.com/Angels-Ray/fake-cursor.git"
+  },
+  "license": "CC-BY-NC-4.0"
 }
