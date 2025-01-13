@@ -3,7 +3,7 @@
   "displayName": "fake-cursor",
   "publisher": "fake-cursor",
   "description": "A extension for regenerating Cursor device IDs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.93.0"
   },
@@ -53,6 +53,11 @@
   },
   "dependencies": {
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/none/repo.git"
   }
 }
