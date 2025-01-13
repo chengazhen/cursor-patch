@@ -5,7 +5,7 @@
   "description": "A extension for regenerating Cursor device IDs",
   "version": "0.0.3",
   "engines": {
-    "vscode": "^1.93.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "@types/vscode": "^1.93.0",
+    "@types/vscode": "^1.80.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.16.0"
