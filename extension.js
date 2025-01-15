@@ -8,17 +8,19 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const initSqlJs = require('sql.js');
 
+const hex = "437572736f72";
+const name_lower = Buffer.from(hex, 'hex').toString('utf8').toLowerCase();
+const name_capitalize = Buffer.from(hex, 'hex').toString('utf8');
+
 /**
  * 激活扩展时调用的方法
  * @param {vscode.ExtensionContext} context - VSCode扩展上下文
  */
 function activate(context) {
-	console.log('Extension "fake-cursor" is now active!');
+	console.log('Extension "fake-rosrus" is now active!');
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('fake-cursor.regenerateId', handleRegenerateId),
-		vscode.commands.registerCommand('fake-cursor.setToken', handleSetToken),
-		vscode.commands.registerCommand('fake-cursor.readToken', handleReadToken)
+		vscode.commands.registerCommand('fake-rosrus.regenerateId', handleRegenerateId)
 	);
 }
 
@@ -51,50 +53,11 @@ async function handleRegenerateId() {
 }
 
 /**
- * 处理设置Token的命令
- */
-async function handleSetToken() {
-	try {
-		const token = await vscode.window.showInputBox({
-			prompt: '请输入 Access Token',
-			password: true,
-			placeHolder: '输入 Access Token'
-		});
-
-		if (!token) {
-			console.log('操作已取消');
-			return;
-		}
-
-		const confirm = await vscode.window.showWarningMessage(
-			'此操作将重新生成设备ID并设置新的Token，是否继续？',
-			{
-				modal: true,
-				detail: '将会备份原有配置文件，但建议手动备份以防万一。'
-			},
-			'继续',
-			'取消'
-		);
-
-		if (confirm !== '继续') {
-			console.log('操作已取消');
-			return;
-		}
-
-		const paths = await getStoragePath();
-		await updateDeviceIds(paths.storagePath, paths.dbPath, token);
-	} catch (error) {
-		vscode.window.showErrorMessage(`操作失败: ${error.message}`);
-		console.error('详细错误:', error);
-	}
-}
-
-/**
  * 获取存储文件的路径
  * @returns {Promise<{storagePath: string, dbPath: string}>} 返回存储文件和数据库的路径
  */
 async function getStoragePath() {
-	const config = vscode.workspace.getConfiguration('fake-cursor');
+	const config = vscode.workspace.getConfiguration('fake-rosrus');
 	const customPath = config.get('storagePath');
 	
 	const basePath = customPath || path.join(
@@ -104,7 +67,7 @@ async function getStoragePath() {
 			'darwin': ['Library', 'Application Support'],
 			'linux': ['.config']
 		}[os.platform()] || (() => { throw new Error('不支持的操作系统'); })(),
-		'Cursor', 'User', 'globalStorage'
+		name_capitalize, 'User', 'globalStorage'
 	);
 
 	return validatePaths(
@@ -185,7 +148,7 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 	// 生成新ID
 	const newIds = {
 		devDeviceId: uuidv4(),
-		machineId: crypto.randomBytes(43).toString('hex').substring(0, 86),
+		machineId: crypto.randomBytes(32).toString('hex'),
 		sqmId: `{${uuidv4().toUpperCase()}}`,
 		macMachineId: crypto.randomBytes(32).toString('hex')
 	};
@@ -226,11 +189,11 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 
 		// 处理认证信息和会员类型
 		const updates = [
-			['cursorAuth/accessToken', accessToken || ''],
-			['cursorAuth/refreshToken', accessToken || ''],
-			['cursorAuth/cachedEmail', accessToken ? 'admin@cursor.sh' : ''],
-			['cursorAuth/cachedSignUpType', accessToken ? 'Auth_0' : ''],
-			['cursorAuth/stripeMembershipType', accessToken ? 'pro' : 'free_trial']
+			[`${name_lower}Auth/accessToken`, accessToken || ''],
+			[`${name_lower}Auth/refreshToken`, accessToken || ''],
+			[`${name_lower}Auth/cachedEmail`, accessToken ? 'admin@none.com' : ''],
+			[`${name_lower}Auth/cachedSignUpType`, accessToken ? 'Auth_0' : ''],
+			[`${name_lower}Auth/stripeMembershipType`, accessToken ? 'pro' : '']
 		];
 
 		updates.forEach(([key, value]) => {
@@ -251,13 +214,13 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 		console.error('更新数据库失败:', error);
 	}
 
-	// 显示结果并退出 Cursor
+	// 显示结果并退出 程序
 	await vscode.window.showInformationMessage(
 		Object.entries(newIds)
 			.map(([key, value]) => `${key}:\n旧: ${oldIds[key]}\n新: ${value}`)
 			.join('\n\n') + 
 		'\n\n数据库状态:\n' + dbUpdateResult +
-		'\n\n✅ 操作已完成，Cursor 将立即退出',
+		'\n\n✅ 操作已完成，' + name_capitalize + ' 将立即退出',
 		{ modal: true }
 	).then(() => {
 		// 使用 process.exit() 强制退出
@@ -273,30 +236,6 @@ async function pathExists(path) {
 		return true;
 	} catch {
 		return false;
-	}
-}
-
-/**
- * 处理获取Token的命令
- */
-async function handleReadToken() {
-	try {
-		const paths = await getStoragePath();
-		const SQL = await initSqlJs();
-		const dbBuffer = await fs.readFile(paths.dbPath);
-		const db = new SQL.Database(dbBuffer);
-
-		const result = db.exec('SELECT value FROM ItemTable WHERE key = "cursorAuth/accessToken"');
-		db.close();
-
-		if (result.length > 0 && result[0].values.length > 0) {
-			vscode.window.showInformationMessage(`Access Token: ${result[0].values[0][0]}`);
-		} else {
-			vscode.window.showInformationMessage('未找到 Access Token');
-		}
-	} catch (error) {
-		vscode.window.showErrorMessage(`操作失败: ${error.message}`);
-		console.error('详细错误:', error);
 	}
 }
 

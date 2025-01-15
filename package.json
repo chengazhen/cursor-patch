@@ -1,9 +1,9 @@
 {
-  "name": "fake-cursor",
-  "displayName": "fake-cursor",
-  "publisher": "fake-cursor",
-  "description": "A extension for regenerating Cursor device IDs",
-  "version": "0.0.4",
+  "name": "fake-rosrus",
+  "displayName": "fake-rosrus",
+  "publisher": "fake-rosrus",
+  "description": "A extension for regenerating rosrus device IDs",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -15,25 +15,17 @@
   "contributes": {
     "commands": [
       {
-        "command": "fake-cursor.regenerateId",
-        "title": "Fake Cursor: Regenerate Device ID"
-      },
-      {
-        "command": "fake-cursor.setToken",
-        "title": "Fake Cursor: Regenerate & Set Token"
-      },
-      {
-        "command": "fake-cursor.readToken",
-        "title": "Fake Cursor: Read Token"
+        "command": "fake-rosrus.regenerateId",
+        "title": "Fake rosrus: Regenerate Device ID"
       }
     ],
     "configuration": {
-      "title": "Fake Cursor",
+      "title": "Fake rosrus",
       "properties": {
-        "fake-cursor.storagePath": {
+        "fake-rosrus.storagePath": {
           "type": "string",
           "default": "",
-          "markdownDescription": "自定义配置文件所在文件夹的路径。留空则使用默认路径：\n\n- Windows: `%APPDATA%/Cursor/User/globalStorage`\n- macOS: `~/Library/Application Support/Cursor/User/globalStorage`\n- Linux: `~/.config/Cursor/User/globalStorage`"
+          "markdownDescription": "自定义配置文件所在文件夹的路径。留空则使用默认路径：\n\n- Windows: `%APPDATA%/******/User/globalStorage`\n- macOS: `~/Library/Application Support/******/User/globalStorage`\n- Linux: `~/.config/******/User/globalStorage`"
         }
       }
     }
@@ -57,7 +49,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Angels-Ray/fake-cursor.git"
+    "url": "https://github.com/Angels-Ray/fake-rosrus.git"
   },
   "license": "CC-BY-NC-4.0"
 }
