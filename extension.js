@@ -20,7 +20,8 @@ function activate(context) {
 	console.log('Extension "fake-rosrus" is now active!');
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('fake-rosrus.regenerateId', handleRegenerateId)
+		vscode.commands.registerCommand('fake-rosrus.regenerateId', handleRegenerateId),
+		vscode.commands.registerCommand('fake-rosrus.showUsage', handleUsage)
 	);
 }
 
@@ -237,6 +238,80 @@ async function pathExists(path) {
 	} catch {
 		return false;
 	}
+}
+
+/**
+ * 获取 rosrus 的使用情况
+ * @param {string} token - rosrus 的 JWT 令牌
+ * @returns {Promise<Object>} - 包含 Rosrus 使用情况的 JSON 对象
+ */
+async function getRosrusUsage(token) {
+	const response = await fetch(`https://www.${name_lower}.com/api/usage`, {
+		headers: {
+			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+			"Cookie": `Workos${name_capitalize}SessionToken=user_01OOOOOOOOOOOOOOOOOOOOOOOO%3A%3A${token}`
+		}
+	});
+	const data = await response.json();
+	return {
+		premium_usage: data["gpt-4"]?.numRequestsTotal || 0,
+		max_premium_usage: data["gpt-4"]?.maxRequestUsage || 999,
+		basic_usage: data["gpt-3.5-turbo"]?.numRequestsTotal || 0,
+		max_basic_usage: data["gpt-3.5-turbo"]?.maxRequestUsage || 999,
+	};
+}
+
+/**
+ * 获取完整的 Stripe 用户信息
+ * @param {string} token - rosrus 的 JWT 令牌
+ * @returns {Promise<Object>} - 包含 Stripe 用户信息的 JSON 对象
+ */
+async function getFullStripeProfile(token) {
+	const response = await fetch(`https://api2.${name_lower}.sh/auth/full_stripe_profile`, {
+		headers: {
+			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+			"Authorization": `Bearer ${token}`
+		}
+	});
+	return response.json();
+}
+
+/**
+ * 处理使用情况
+ */
+async function handleUsage() {
+    try {
+        let result = "";
+        const paths = await getStoragePath();
+        
+        // 从数据库中获取 token
+        const SQL = await initSqlJs();
+        const dbBuffer = await fs.readFile(paths.dbPath);
+        const db = new SQL.Database(dbBuffer);
+        const tokenResult = db.exec(`SELECT value FROM ItemTable WHERE key = '${name_lower}Auth/accessToken'`);
+        const token = tokenResult.length > 0 ? tokenResult[0].values[0][0] : null;
+
+        if (!token) {
+            throw new Error("未找到 token");
+        }
+
+        const usage = await getRosrusUsage(token);
+        result += `Premium Usage: ${usage.premium_usage}/${usage.max_premium_usage}; \n`;
+        result += `Basic Usage: ${usage.basic_usage}/${usage.max_basic_usage}; \n`;
+
+        // 获取完整的 Stripe 用户信息
+        const profile = await getFullStripeProfile(token);
+        result += `Membership Type: ${profile.membershipType}; \n`;
+        result += `Days Remaining on Trial: ${profile.daysRemainingOnTrial}; \n`;
+
+        // 显示信息
+        // vscode.window.showInformationMessage(result, { modal: true }); // 弹窗, 但不好看
+		vscode.window.showInformationMessage(result); // 无感 Message, 舒服
+        console.log(result);
+    } catch (error) {
+        vscode.window.showErrorMessage(`获取使用情况时出错: ${error.message}`);
+        console.error("获取使用情况时出错:", error);
+    }
 }
 
 function deactivate() {}

@@ -8,12 +8,14 @@
 - 自动备份原有配置文件
 - 支持自定义配置文件路径
 - 自动清理设备标识文件
+- 显示使用情况
 
 ## 使用方法
 
 1. 按下 `Ctrl+Shift+P` (Windows/Linux) 或 `Cmd+Shift+P` (Mac) 打开命令面板
 2. 选择以下命令之一：
    - `Fake rosrus: Regenerate Device ID`: 重新生成设备 ID 并清空认证信息
+   - `Fake rosrus: Show Usage`: 显示使用情况
 3. 根据提示完成操作
 4. 操作完成后 `rosrus` 将自动退出，重启后生效
 
@@ -33,6 +35,13 @@
 - 操作会清空现有认证信息，请确保备份重要数据
 - 修改后需要重启 `rosrus` 才能生效
 - 如果配置文件不存在，可以手动选择文件夹位置
+
+## 开发
+
+```bash
+npm install
+vsce package
+```
 
 ## 免责声明
 

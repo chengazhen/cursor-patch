@@ -3,7 +3,7 @@
   "displayName": "fake-rosrus",
   "publisher": "fake-rosrus",
   "description": "A extension for regenerating rosrus device IDs",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -17,6 +17,10 @@
       {
         "command": "fake-rosrus.regenerateId",
         "title": "Fake rosrus: Regenerate Device ID"
+      },
+      {
+        "command": "fake-rosrus.showUsage",
+        "title": "Fake rosrus: Show Usage"
       }
     ],
     "configuration": {
@@ -44,6 +48,7 @@
     "eslint": "^9.16.0"
   },
   "dependencies": {
+    "node-fetch": "^2.7.0",
     "sql.js": "^1.8.0",
     "uuid": "^11.0.5"
   },
