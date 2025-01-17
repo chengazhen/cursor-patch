@@ -3,14 +3,16 @@
   "displayName": "fake-rosrus",
   "publisher": "fake-rosrus",
   "description": "A extension for regenerating rosrus device IDs",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -21,6 +23,10 @@
       {
         "command": "fake-rosrus.showUsage",
         "title": "Fake rosrus: Show Usage"
+      },
+      {
+        "command": "fake-rosrus.readToken",
+        "title": "Fake rosrus: Read Token"
       }
     ],
     "configuration": {
@@ -29,7 +35,32 @@
         "fake-rosrus.storagePath": {
           "type": "string",
           "default": "",
-          "markdownDescription": "自定义配置文件所在文件夹的路径。留空则使用默认路径：\n\n- Windows: `%APPDATA%/******/User/globalStorage`\n- macOS: `~/Library/Application Support/******/User/globalStorage`\n- Linux: `~/.config/******/User/globalStorage`"
+          "markdownDescription": "自定义配置文件所在文件夹的路径。留空则使用默认路径: \n\n- Windows: `%APPDATA%/******/User/globalStorage`\n- macOS: `~/Library/Application Support/******/User/globalStorage`\n- Linux: `~/.config/******/User/globalStorage`"
+        },
+        "fake-rosrus.usageMonitor": {
+          "type": "object",
+          "description": "使用情况监控器配置",
+          "properties": {
+            "checkInterval": {
+              "type": "number",
+              "default": 0,
+              "minimum": 0,
+              "maximum": 86400,
+              "description": "自动检查使用情况间隔 (秒) , 小于20不启用, 范围: 0-86400"
+            },
+            "customCommand": {
+              "type": "string",
+              "default": "",
+              "description": "剩余次数小于指定值时, 要执行的自定义命令 (如: dir, ls 等)"
+            },
+            "usageThreshold": {
+              "type": "number",
+              "default": 0,
+              "minimum": 0,
+              "maximum": 5000,
+              "description": "当剩余次数小于此值时执行命令, 默认为0"
+            }
+          }
         }
       }
     }

@@ -9,6 +9,7 @@
 - 支持自定义配置文件路径
 - 自动清理设备标识文件
 - 显示使用情况
+- 使用情况监控器
 
 ## 使用方法
 
@@ -27,6 +28,29 @@
   - Windows: `%APPDATA%/******/User/globalStorage`
   - macOS: `~/Library/Application Support/******/User/globalStorage`
   - Linux: `~/.config/******/User/globalStorage`
+
+- `fake-rosrus.usageMonitor`: 使用情况监控器配置
+  - `checkInterval`: 自动检查使用情况间隔（秒），小于20不启用，范围：0-86400
+  - `customCommand`: 剩余次数小于指定值时要执行的自定义命令（如：dir, ls 等）
+  - `usageThreshold`: 当剩余次数小于此值时执行命令，默认为0
+
+### 配置示例
+
+```json
+{
+    "fake-rosrus.usageMonitor": {
+        "checkInterval": 20,        // 每20秒检查一次
+        "usageThreshold": 0,        // 剩余次数为0时触发
+        "customCommand": ""         // 要执行的命令，留空则只显示使用情况
+    }
+}
+```
+
+### 使用情况监控说明
+
+- 定时检查：设置 `checkInterval` 大于等于20秒后，扩展会自动定期检查使用情况
+- 自动执行：当剩余次数小于 `usageThreshold` 时，会执行 `customCommand` 指定的命令
+- 安全限制：出于安全考虑，部分危险命令（如：rm、reboot等）被禁止执行
 
 ## 注意事项
 
