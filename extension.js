@@ -204,8 +204,8 @@ async function validatePaths(storagePath, dbPath) {
 			
 			if (!storageExists || !dbExists) {
 				const missingFiles = [
-					!storageExists && 'storage_fake.json',
-					!dbExists && 'state_fake.vscdb'
+					!storageExists && 'storage.json',
+					!dbExists && 'state.vscdb'
 				].filter(Boolean).join(' 和 ');
 				throw new Error(`所选文件夹中缺少: ${missingFiles}`);
 			}
