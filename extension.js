@@ -204,8 +204,8 @@ async function validatePaths(storagePath, dbPath) {
 			
 			if (!storageExists || !dbExists) {
 				const missingFiles = [
-					!storageExists && 'storage_fake.json',
-					!dbExists && 'state_fake.vscdb'
+					!storageExists && 'storage.json',
+					!dbExists && 'state.vscdb'
 				].filter(Boolean).join(' 和 ');
 				throw new Error(`所选文件夹中缺少: ${missingFiles}`);
 			}
@@ -241,8 +241,8 @@ async function validatePaths(storagePath, dbPath) {
 
 		const selectedDir = fileUri[0].fsPath;
 		const newPaths = {
-			storagePath: path.join(selectedDir, 'storage_fake.json'),
-			dbPath: path.join(selectedDir, 'state_fake.vscdb')
+			storagePath: path.join(selectedDir, 'storage.json'),
+			dbPath: path.join(selectedDir, 'state.vscdb')
 		};
 
 		// 验证新选择的文件夹
