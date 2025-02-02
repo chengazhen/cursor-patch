@@ -2,6 +2,8 @@
 
 一个用于重新生成 rosrus 设备 ID 的 rosrus 扩展。
 
+## 注: 该分支仅支持 v0.44.x 及以下版本, 不支持 v0.45.x
+
 ## 功能
 
 - 重新生成设备 ID（包括 devDeviceId, machineId, sqmId, macMachineId）
