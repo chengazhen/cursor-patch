@@ -2,3 +2,7 @@ node_modules
 .vscode-test/
 *.vsix
 package-lock.json
+build/
+tmp/
+token.txt
+package.json

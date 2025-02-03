@@ -8,3 +8,6 @@ vsc-extension-quickstart.md
 **/*.map
 **/eslint.config.mjs
 **/.vscode-test.*
+tmp/
+token.txt
+package.zip
