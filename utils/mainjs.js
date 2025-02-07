@@ -4,13 +4,15 @@ const { name_lower, name_capitalize } = require("./name.js");
 
 // 支持的版本的md5
 const mainJsMd5 = {
-    "1f53d40367d0ac76f3f123c83b901497": ["0.45.2~0.45.8"],
+    "1f53d40367d0ac76f3f123c83b901497": ["0.45.2~0.45.8[-5]"],
+    "1650464dc26313c87c789da60c0495d0": ["0.45.10~[-5]"],
     "6114002d8e2bb53853f4a49e228e8c74": ["0.45.2"],
     "fde15c3fe02b6c48a2a8fa788ff3ed2a": ["0.45.3"],
     "0052f48978fa8e322e2cb7e0c101d6b2": ["0.45.4"],
     "74ed1a381f4621ccfd35989f322dc8a2": ["0.45.5"],
     "e82b270f8c114247968bb4a04a4f4f72": ["0.45.7"],
     "352c7f017a7eab95690263a9d83b7832": ["0.45.8"],
+    "217d4ae5933b13b9aae1829750d0b709": ["0.45.10"],
 };
 
 async function calculateMd5WithoutLastLines(
