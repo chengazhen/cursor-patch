@@ -220,11 +220,13 @@ async function updateDeviceIds(storagePath, dbPath, accessToken) {
 		];
 
 		updates.forEach(([key, value]) => {
-			db.run("UPDATE ItemTable SET value = ? WHERE key = ?", [
-				value,
-				key,
-			]);
-		});
+            const exists = db.exec(`SELECT 1 FROM ItemTable WHERE key = ?`, [key]);
+            if (exists.length === 0) {
+                db.run("INSERT INTO ItemTable (key, value) VALUES (?, ?)", [key, value]);
+            } else {
+                db.run("UPDATE ItemTable SET value = ? WHERE key = ?", [value, key]);
+            }
+        });
 
 		// 保存数据库文件
 		const data = db.export();
