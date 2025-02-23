@@ -1,12 +1,16 @@
 const fs = require("fs").promises;
 const crypto = require("crypto");
 const { name_lower, name_capitalize } = require("./name.js");
+const fetch = require('node-fetch');
+const vscode = require("vscode");
 
 // 支持的版本的md5
-const mainJsMd5 = {
+const mainJsMd5_Local = {
     "1f53d40367d0ac76f3f123c83b901497": ["0.45.2~0.45.8[-5]", "0.45.11[-5]"],
     "1650464dc26313c87c789da60c0495d0": ["0.45.10[-5]"],
     "723d492726d0cfa5ac2ad0649f499ef5": ["0.45.15[-5]"],
+    "2df7e08131902951452d37fe946b8b8c": ["0.46.0[-5]"],
+    "44fd6c68052686e67c0402f69ae3f1bb": ["0.46.2[-5]"],
     "6114002d8e2bb53853f4a49e228e8c74": ["0.45.2"],
     "fde15c3fe02b6c48a2a8fa788ff3ed2a": ["0.45.3"],
     "0052f48978fa8e322e2cb7e0c101d6b2": ["0.45.4"],
@@ -15,7 +19,29 @@ const mainJsMd5 = {
     "352c7f017a7eab95690263a9d83b7832": ["0.45.8"],
     "217d4ae5933b13b9aae1829750d0b709": ["0.45.10"],
     "76bddc6605df5d845af68d4959a4f045": ["0.45.15"],
+    "a6d83fa177878ff497286d659957d9ab": ["0.46.0"],
+    "95277d19fe0bb4eb8bbb236d5386cd46": ["0.46.2"]
 };
+
+async function getMainJsMd5() {
+    const originalUrl = "https://gist.githubusercontent.com/Angels-Ray/11a0c8990750f4f563292a55c42465f1/raw";
+    
+    async function tryFetch(url) {
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                return await response.json();
+            }
+        } catch (error) {
+            console.error(`获取MD5列表失败 ${url}:`, error);
+        }
+        return null;
+    }
+
+    return await tryFetch(originalUrl) || 
+        await tryFetch("https://gh-proxy.com/" + originalUrl) || 
+        mainJsMd5_Local;
+}
 
 async function calculateMd5WithoutLastLines(
     sourceFilePath,
@@ -42,13 +68,21 @@ async function calculateMd5WithoutLastLines(
  */
 async function updateMainJsContent(filePath) {
     const md5 = await calculateMd5WithoutLastLines(filePath);
+    const mainJsMd5 = await getMainJsMd5();
 
     if (!mainJsMd5[md5]) {
         const versions = Object.values(mainJsMd5).flat().join(", ");
-        throw new Error(
-            `不支持的 ${name_capitalize} 版本或 main.js 已被修补。\n支持的版本: ${versions}`,
+        const message = `当前 main.js 的版本可能未被支持, 或已修补过\n\n已支持的版本: ${versions}\n\n是否仍要继续修补？`;
+        
+        const choice = await vscode.window.showWarningMessage(
+            message,
+            { modal: true },
+            "继续修补",
         );
 
+        if (choice !== "继续修补") {
+            throw new Error("操作已取消");
+        }
     }
 
     let content = await fs.readFile(filePath, "utf8");
