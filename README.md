@@ -2,7 +2,8 @@
 
 一个用于重新生成 `Cu*sor` 设备 ID 和设置 `Access Token` 的 `Cu*sor` 扩展.
 
-## 0.45.x 版本需要使用`Fake Cu*sor: Patch Machine ID`命令修补机器码获取逻辑。每次更新后需要重新Patch
+## 0.45.x 版本以上需要使用`Fake Cu*sor: Patch Machine ID`命令修补机器码获取逻辑。每次更新后需要重新Patch
+## 建议使用0.46.x，0.47.x 暂时没有时间适配，各位欢迎大佬提PR
 
 
 ## 功能
