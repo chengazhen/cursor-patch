@@ -13,6 +13,28 @@ const { updateMainJsContent } = require("./utils/mainjs");
 const { name_lower, name_capitalize } = require("./utils/name");
 
 let usageTimer = null; // 定时器变量
+let statusBarItem = null; // 状态栏项
+
+/**
+ * 创建状态栏项
+ */
+function createStatusBarItem() {
+	console.log("Creating status bar item...");
+	if (statusBarItem) {
+		console.log("Disposing old status bar item");
+		statusBarItem.dispose();
+	}
+	
+	statusBarItem = vscode.window.createStatusBarItem(
+		vscode.StatusBarAlignment.Right,
+		0 // 设置为最高优先级
+	);
+	statusBarItem.text = "$(key) Set Token";
+	statusBarItem.tooltip = "点击设置 Cursor Token";
+	statusBarItem.command = `fake-${name_lower}.setToken`;
+	statusBarItem.show();
+	console.log("Status bar item created and shown");
+}
 
 /**
  * 激活扩展时调用的方法
@@ -20,6 +42,23 @@ let usageTimer = null; // 定时器变量
  */
 function activate(context) {
 	console.log(`Extension "fake-${name_lower}" is now active!`);
+	console.log("Extension context:", context);
+
+	// 确保状态栏可见
+	vscode.commands.executeCommand('workbench.action.showStatusBar');
+
+	// 创建状态栏项
+	createStatusBarItem();
+	context.subscriptions.push(statusBarItem);
+	console.log("Status bar item added to subscriptions");
+
+	// 监听窗口焦点变化，确保状态栏项始终显示
+	context.subscriptions.push(
+		vscode.window.onDidChangeWindowState(() => {
+			console.log("Window state changed, recreating status bar item");
+			createStatusBarItem();
+		})
+	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
